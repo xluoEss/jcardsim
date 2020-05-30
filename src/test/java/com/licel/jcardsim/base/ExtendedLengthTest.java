@@ -21,6 +21,8 @@ public class ExtendedLengthTest extends TestCase {
     private static final byte DUMMY = (byte) 0x41;
 
     private static final byte[] TEST_APPLET_AID_BYTES = Hex.decode("0102030405cafe01");
+    
+    private static final short JCOP_BUF_LENGTH = 1462;
 
     public ExtendedLengthTest(String testName) {
         super(testName);
@@ -160,7 +162,7 @@ public class ExtendedLengthTest extends TestCase {
 
     public void testExtendedApduDigest() throws NoSuchAlgorithmException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-        byte[] input = new byte[Short.MAX_VALUE];
+        byte[] input = new byte[JCOP_BUF_LENGTH - 7]; //Short.MAX_VALUE];
         Arrays.fill(input, DUMMY);
         byte[] expectedOutput = sha1.digest(input);
 
@@ -181,7 +183,7 @@ public class ExtendedLengthTest extends TestCase {
     }
 
     public void testExtendedApduEcho() {
-        byte[] input = new byte[Short.MAX_VALUE - 2];
+        byte[] input = new byte[JCOP_BUF_LENGTH - 7]; //Short.MAX_VALUE - 2];
         Arrays.fill(input, (byte) 0x41);
 
         Simulator instance = prepareSimulator();

@@ -31,9 +31,9 @@ import javacard.framework.Util;
  */
 public class APDUProxy {
     // buffer size
-    private static final short BUFFER_SIZE = 260;
+    private static final short BUFFER_SIZE = 1462;//260;
     // buffer size (extended APDU) + (CLA,INS,P1,P2,0,Lc_Hi,Lc_Low,CData,Le_Hi,Le_Lo)
-    private static final int BUFFER_EXTENDED_SIZE = Short.MAX_VALUE + 10;
+    private static final int BUFFER_EXTENDED_SIZE = 1462;//Short.MAX_VALUE + 10;
     // input block size, for T0 protocol = 1
     private static final short T0_IBS = 1;
     // output block size, for T0 protocol = 258
@@ -728,7 +728,8 @@ public class APDUProxy {
             }
             case Case2Extended:
                 lc = (short) 0;
-                le = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 1);
+                short le2e = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 1);
+                le = le2e == 0 ? Short.MAX_VALUE : (short) (0xFFFF & le2e);
                 break;
             case Case3:
                 lc = (short) (0xFF & buffer[ISO7816.OFFSET_LC]);
@@ -746,7 +747,9 @@ public class APDUProxy {
             }
             case Case4Extended:
                 lc = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 1);
-                le = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 3 + lc);
+//                le = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 3 + lc);
+                short le4e = ByteUtil.getShort(buffer, ISO7816.OFFSET_LC + 3 + lc);
+                le = le4e == 0 ? Short.MAX_VALUE : (short) (0xFFFF & le4e);
                 break;
             case Case1:
             default:
